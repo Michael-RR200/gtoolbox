@@ -54,5 +54,35 @@ class Base {
         $now = explode(' ', microtime());
         $end = $now[0] + $now[1];
         return round($end - $start,4);
-    }
+    }#fn getRequestTime
+    
+    public function  writeToLog($message,$action = '', $priority = '')
+    {
+        $filename = $this->baseDir . $this->logFile;
+        #echo $filename;
+        if (!$fp = fopen($filename, 'a')) 
+        {
+             #echo "error writing to file: -{$filename}-";
+             return;
+        }
+
+        if (empty($action))
+        {   $action = $this->logAction; }
+        if (empty($priority))
+        {   $priority = $this->logPriority; }
+        
+        $totalTime = $this->getFeedRequestTime();  
+        $tempstr = ("\n" . date('Y-m-d H:i:s') . " (T:$totalTime) ({$_SERVER['REMOTE_ADDR']}) => [$action] [$priority] ");
+        $session =  '';
+        if (!empty($_SESSION))
+        {   $session =  "[SESSION =>" . json_encode($_SESSION) . " ENDSESSION]";  }
+        
+        $message =  ("$tempstr $message $session") ; 
+        // Write $somecontent to our opened file.
+        if (!fwrite($fp, $message)) {
+                 return;
+        }
+        fclose($fp);
+    }#fn writeToLog
+    
 }# class Base
