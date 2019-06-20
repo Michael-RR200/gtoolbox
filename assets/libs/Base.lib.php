@@ -25,8 +25,20 @@ class Base {
     function __construct(){
         $this->startTime = microtime();
         $this->baseDir = $_SERVER['DOCUMENT_ROOT'];
-        sleep(1);
-        echo ($this->getRequestTime());        
+
+        if ($_SERVER["HTTP_HOST"] == 'localhost') 
+        {
+	        $this->baseDir .= '/assets/';
+	        date_default_timezone_set('America/Denver');
+	        $this->localhost = true;
+        }
+        else
+        {   
+	        $this->baseDir .= '/assets/';
+	        date_default_timezone_set('America/New_York');
+            error_reporting(0);
+        }
+
     }#fn constructor
    
     function __destruct() {
